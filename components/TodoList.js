@@ -5,20 +5,29 @@ import {Ionicons} from "../node_modules/@expo/vector-icons";
 import { Entypo } from "../node_modules/@expo/vector-icons";
 import { AntDesign } from "../node_modules/@expo/vector-icons";
 import Firebase from "../config/Firebase";
+import { Feather } from "../node_modules/@expo/vector-icons";
+import moment from 'moment';
 
 //disable yellow warnings on EXPO client!
 console.disableYellowBox = true;
 
-const TodoList = ({ list }) => {
-  
+const TodoList = ({ list },data) => {
+  var ay =moment().format('MMMM')
+  const [checkbutton, setCheck] = useState(false);
+
+
+
+
   return (
    
     <View>
       <View
         style={[styles.listContainer]}
       >
-        <View style={{flexDirection:"row", backgroundColor:"#adcceb"}}>
+        <View style={{flexDirection:"row"}}>
          
+          <AntDesign name={list.icon} size={35} color={list.color} />
+
           <Text style={styles.listTitle} numberOfLines={1}>
             {list.name}
           </Text>

@@ -6,9 +6,11 @@ import Firebase from '../config/Firebase'
 import AddTodo from '../components/AddTodo';
 import TodoList from '../components/TodoList';
 
+import AliskanliklarList from '../components/AliskanliklarList';
+
 let datesWhitelist = [
   {
-    start: moment(),
+    start: new Date(2021, 0, 1,),
     end: moment().add(365, 'days'), // total 4 days enabled
   },
 ];
@@ -82,12 +84,14 @@ const locale = {
  const Anasayfa=() => {
 
   var Ay =moment().format('MMMM'); 
+  
+  var gun =moment().format('LL'); 
   const [ay,setAy]=useState("Ocak")
   const [addFlowersVisible, setFlowers] = useState(false);
 
   const [modalData, setModalData] = useState("25 Ocak 2021");
   const [users, setUsers] = useState([]);
-
+  const [Aliskanliklar, setAliskanliklar] = useState([]);
 
 
     useEffect(()=>{
@@ -112,6 +116,26 @@ const locale = {
           setUsers(users);
         });
 
+         
+    const subscriber2 = Firebase.firestore()
+    .collection("Users")
+    .doc("Aliskanliklar")
+    .collection("Aliskanliklar")
+
+    .onSnapshot((querySnapshot) => {
+      const aliskanlik = [];
+
+      querySnapshot.forEach((documentSnapshot) => {
+        aliskanlik.push({
+          ...documentSnapshot.data(),
+          key: documentSnapshot.id,
+        });
+      });
+
+      setAliskanliklar(aliskanlik);
+    });
+        
+
 
           toggleAddFlowersModal = () => {
             setFlowers(true);
@@ -124,7 +148,7 @@ const locale = {
 
 
 
-          return () => subscriber();
+          return () => {subscriber(); subscriber2();}
 
     },[modalData])
 
@@ -132,6 +156,11 @@ const locale = {
     renderList = (list) => {
         return <TodoList list={list} />;
       };
+
+      renderAliskanliklarList = (list) => {
+        return <AliskanliklarList  list={list}  />;
+      };
+
 
 
 
@@ -161,7 +190,6 @@ const locale = {
             borderWidth: 1,
             highlightColor: 'grey',
           }}
-          
           style={{ height: 100, paddingTop: 20, paddingBottom: 10 }}
           calendarHeaderStyle={{ color: 'white' }}
           calendarColor={'orange'}
@@ -190,6 +218,16 @@ const locale = {
                 renderItem={({ item }) => renderList(item)}
             />
             </View>
+            <Text style={{backgroundColor:"black",color:"white", fontSize:25}}>ALIŞKANLIKLAR</Text>
+            <View style={styles.listAreaAliskanliklar}>
+              
+                <FlatList
+                data={Aliskanliklar}
+                horizontal={false}
+                showsHorizontalScrollIndicator={false}
+                renderItem={({ item }) => renderAliskanliklarList(item)}
+            />
+            </View>
 
           </View>
 
@@ -198,6 +236,8 @@ const locale = {
                 <Text>Diğer bileşenler</Text>
             </View>
           </View>
+
+   
          
           </ScrollView>
       </View>
@@ -213,6 +253,14 @@ const styles = StyleSheet.create({
       justifyContent:"center",
       alignContent:"center",
       backgroundColor:"pink",
+      width:"100%",
+      paddingHorizontal:"5%",
+    },
+    listAreaAliskanliklar: {
+      flex: 1,
+      justifyContent:"center",
+      alignContent:"center",
+      backgroundColor:"blue",
       width:"100%",
       paddingHorizontal:"5%",
     },

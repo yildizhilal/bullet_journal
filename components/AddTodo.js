@@ -6,11 +6,13 @@ import {
   KeyboardAvoidingView,
   TouchableOpacity,
   TextInput,
-  Modal
+  Modal,
+  FlatList
   
 } from "react-native";
 import Firebase from "../config/Firebase";
 import { AntDesign } from "../node_modules/@expo/vector-icons";
+import { colors } from "react-native-elements";
 
 
 import moment from "moment";
@@ -21,11 +23,77 @@ const AddTodo = (data) => {
     var ay =moment().format('MMMM'); 
     
   const [isim, setisim] = useState("");
+  const [color, setcolor] = useState({});
+  const [iconn, seticon] = useState({});
+
+
+  var backgroundColor = [
+    "#F44336",
+    "#E91E63",
+    "#9C27B0",
+    "#673AB7",
+    "#2196F3",
+    "#4CAF50",
+    "#FF9800",
+    "#26C6DA",
+    "#81C784",
+    "#FFC107",
+  ];
+
+  var icon = [
+    "star",
+    "heart",
+    "exclamationcircle",
+    "mail",
+    "shoppingcart",
+    "phone",
+    "pushpin",
+    "gift",
+  ];
+
+
+
+
+
+  renderColor = () => {
+    return backgroundColor.map((color) => {
+      return (
+        <TouchableOpacity
+          key={color}
+          style={{
+            width: 30,
+            height: 30,
+            borderRadius: 4,
+            backgroundColor: color,
+          }}
+          onPress={() => setcolor(color)}
+        />
+      );
+    });
+  };
+
+  renderIcon = () => {
+    return icon.map((iconn) => {
+      return (
+        <TouchableOpacity
+          key={iconn}
+          onPress={() => seticon(iconn)}
+      >
+        <AntDesign name={iconn} size={40} color={color} />
+        </TouchableOpacity>
+      );
+    });
+  };
+
   
   createFlowersList = () => {
+    console.log(data.props)
 
     Firebase.firestore().collection("Users").doc(ay.toString()).collection(data.props).doc("Todo").collection("Todo").doc(isim).set({
         name: isim,
+        color:color,
+        icon:iconn,
+        check:false
     })
     .then(function() {
         console.log("Document successfully written!");
@@ -66,27 +134,33 @@ const AddTodo = (data) => {
         />
       
 </View>
-<TouchableOpacity
-          style={{
-            backgroundColor:"#adcceb",
-            marginTop: 24,
-            height: 50,
-            borderRadius: 6,
-            alignItems: "center",
-            justifyContent: "space-around",
-            alignSelf: "center",
-            width: 310,
-          }}
-          onPress={()=>toggleAddBarkod()}
-        >
-         
-        </TouchableOpacity>
+
+<View style={(stye = styles.colorContainer)}>
+          <TouchableOpacity>
+            <FlatList
+              data={backgroundColor}
+              horizontal={true}
+              showsHorizontalScrollIndicator={false}
+              renderItem={({ item }) => renderColor(item)}
+            />
+          </TouchableOpacity>
+        </View>
 
 
+        <View style={(stye = styles.colorContainer)}>
+          <TouchableOpacity>
+            <FlatList
+              data={icon}
+              horizontal={true}
+              showsHorizontalScrollIndicator={true}
+              renderItem={({ item }) => renderIcon(item)}
+            />
+          </TouchableOpacity>
+        </View>       
 
         <TouchableOpacity
           style={{
-            backgroundColor:"#adcceb",
+            backgroundColor:color,
             marginTop: 24,
             height: 50,
             borderRadius: 6,
@@ -141,6 +215,11 @@ const styles = StyleSheet.create({
     fontSize: 18,
     alignSelf: "center",
     width: "45%",
+  },
+  colorContainer: {
+    flexDirection: "row",
+    justifyContent: "space-around",
+    marginTop: 20,
   },
 });
 

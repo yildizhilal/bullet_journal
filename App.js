@@ -1,10 +1,10 @@
 import React from 'react';
 import {SafeAreaView} from 'react-native';
-import Anasayfa from './screens/Anasayfa';
+import TabNavigation from './navigation/TabNavigator';
 
 const App = () => {
   return (
-    <Anasayfa/>
+    <TabNavigation/>
   );
 };
 
