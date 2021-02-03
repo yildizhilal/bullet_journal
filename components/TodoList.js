@@ -12,11 +12,6 @@ import moment from 'moment';
 console.disableYellowBox = true;
 
 const TodoList = ({ list },data) => {
-  var ay =moment().format('MMMM')
-  const [checkbutton, setCheck] = useState(false);
-
-
-
 
   return (
    

@@ -83,22 +83,24 @@ const locale = {
 
  const Anasayfa=() => {
 
-  var Ay =moment().format('MMMM'); 
+
   
-  var gun =moment().format('LL'); 
-  const [ay,setAy]=useState("Ocak")
   const [addFlowersVisible, setFlowers] = useState(false);
 
   const [modalData, setModalData] = useState("25 Ocak 2021");
   const [users, setUsers] = useState([]);
   const [Aliskanliklar, setAliskanliklar] = useState([]);
 
+  const [ay, setAy] = useState("2021-02");
+
 
     useEffect(()=>{
+
+      setAy(modalData.substring(0,7))
     
         const subscriber = Firebase.firestore()
         .collection("Users")
-        .doc(Ay)
+        .doc(ay)
         .collection(modalData)
         .doc("Todo")
         .collection("Todo")
@@ -146,8 +148,6 @@ const locale = {
           };
 
 
-
-
           return () => {subscriber(); subscriber2();}
 
     },[modalData])
@@ -175,7 +175,7 @@ const locale = {
       visible={addFlowersVisible}
       onRequestClose={()=>toggleAddFlowersModal()}
     >
-      <AddTodo props={modalData} />
+      <AddTodo props={modalData} props2={ay} />
     </Modal>
 
 
@@ -202,7 +202,7 @@ const locale = {
           datesWhitelist={datesWhitelist}
           locale={locale}
           iconContainer={{ flex: 0.1 }}
-          onDateSelected={(date) => setModalData(date.format("LL"))}
+          onDateSelected={(date) => setModalData(date.format("YYYY-MM-DD"))}
           
         //  showDate={false}  ocak,subat 
         /><ScrollView>

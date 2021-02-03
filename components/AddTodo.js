@@ -18,7 +18,7 @@ import { colors } from "react-native-elements";
 import moment from "moment";
 console.disableYellowBox = true;
 
-const AddTodo = (data) => {
+const AddTodo = (data,data2) => {
 
     var ay =moment().format('MMMM'); 
     
@@ -89,7 +89,7 @@ const AddTodo = (data) => {
   createFlowersList = () => {
     console.log(data.props)
 
-    Firebase.firestore().collection("Users").doc(ay.toString()).collection(data.props).doc("Todo").collection("Todo").doc(isim).set({
+    Firebase.firestore().collection("Users").doc(data.props2).collection(data.props).doc("Todo").collection("Todo").doc(isim).set({
         name: isim,
         color:color,
         icon:iconn,

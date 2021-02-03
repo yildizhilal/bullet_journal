@@ -11,68 +11,42 @@ import { Calendar } from "react-native-calendars";
 console.disableYellowBox = true;
 
 const Zincir = ({ list }) => {
-    const [checkbutton, setCheck] = useState(false);
-    
     
     const [modalVisible, setModalVisible] = useState(false);
-    var tarih =moment().format('LL'); 
-    const [tt, setTarih] = useState([]);
-    const [son, setSon] = useState([]);
+    const [tarih,setTarih]=useState([]);
+
+
+    let newDaysObject = {};
+
+    tarih.forEach(function(day){
+      newDaysObject[day] = {
+          selected: true,
+          marked: true,
+          selectedColor:"purple"
+      };
+    });
+
 
     useEffect(()=>{
-    
 
-      var cityRef =Firebase.firestore()
+
+    const subscriber=Firebase.firestore()
       .collection("Users")
       .doc("Aliskanliklar")
       .collection("Aliskanliklar")
       .doc(list.name)
-      .collection("Takip")
-      .doc(tarih)
-
-      var setWithMerge = cityRef.set({
-          check: false
-      }, { merge: true });
-
-
-      const subscriber=Firebase.firestore()
-      .collection("Users")
-      .doc("Aliskanliklar")
-      .collection("Aliskanliklar")
-      .doc(list.name)
-      .collection("Takip")
-      .doc(tarih)
-    .onSnapshot(function(doc) {
-        setCheck(doc.data().check)
-    });
-
-
-    const subscriberTarih = Firebase.firestore()
-    .collection("Users")
-    .doc("Aliskanliklar")
-    .collection("Aliskanliklar")
-    .doc(list.name)
-    .collection("Takip")
-  
-    .onSnapshot((querySnapshot) => {
-      const tt = [];
-
-      querySnapshot.forEach((documentSnapshot) => {
-        tt.push({
-          ...documentSnapshot.data(),
-          key: documentSnapshot.id,
+      .collection("Takip").where("check", "==", true)
+    .onSnapshot(function(querySnapshot) {
+        var cities = [];
+        querySnapshot.forEach(function(doc) {
+            cities.push(doc.id);
         });
-      });
-
-
-
-      setTarih(tt);
+        setTarih(cities)
     });
 
-  
 
-    return () =>{subscriber(); subscriberTarih();} 
-    },[tarih])
+    return () =>{subscriber(); } 
+    },[modalVisible])
 
 
 
@@ -93,12 +67,9 @@ const Zincir = ({ list }) => {
                 <AntDesign name="close" size={24} color="black" onPress={() => {
           setModalVisible(false);
         }} />
-        <Text>{son}</Text>
                <Calendar
-                markedDates={{
-                "2021-01-25": {selected: true, marked: true, selectedColor: 'blue'},
-                }}
-                markingType={'multi-dot'}
+
+                markedDates={newDaysObject}
                 />
                
         </View>

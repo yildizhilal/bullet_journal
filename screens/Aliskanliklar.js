@@ -32,7 +32,7 @@ const Aliskanliklar = () => {
   };
   LocaleConfig.defaultLocale = 'tr';
 
-  var tarih =moment().format('LL'); 
+  var tarih =moment().format("YYYY-MM-DD")
     
   const [isim, setisim] = useState("bos");
   const [color, setcolor] = useState({});

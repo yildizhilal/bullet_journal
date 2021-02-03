@@ -12,7 +12,7 @@ console.disableYellowBox = true;
 
 const AliskanliklarList = ({ list }) => {
     const [checkbutton, setCheck] = useState(false);
-    var tarih =moment().format('LL'); 
+    var tarih =moment().format("YYYY-MM-DD"); 
     const [tt, setTarih] = useState([]);
 
 
@@ -65,9 +65,6 @@ const AliskanliklarList = ({ list }) => {
 
       setTarih(tt);
     });
-
-
-    console.log("xxx",tt)
 
 
 
