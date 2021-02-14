@@ -1,5 +1,5 @@
 import React, { Component, useEffect, useState } from 'react';
-import { View ,Text,StyleSheet, Button,Modal,FlatList,ScrollView} from 'react-native';
+import { View ,Text,StyleSheet, Button,Modal,FlatList,ScrollView,TouchableOpacity} from 'react-native';
 import moment from 'moment';
 import CalendarStrip from 'react-native-calendar-strip';
 import Firebase from '../config/Firebase'
@@ -7,6 +7,10 @@ import AddTodo from '../components/AddTodo';
 import TodoList from '../components/TodoList';
 
 import AliskanliklarList from '../components/AliskanliklarList';
+
+import Hedef from '../components/Hedef';
+import { FontAwesome5,AntDesign } from '@expo/vector-icons';
+
 
 let datesWhitelist = [
   {
@@ -90,6 +94,8 @@ const locale = {
   const [modalData, setModalData] = useState("25 Ocak 2021");
   const [users, setUsers] = useState([]);
   const [Aliskanliklar, setAliskanliklar] = useState([]);
+  
+  const [Hedefler, setHedef] = useState([]);
 
   const [ay, setAy] = useState("2021-02");
 
@@ -138,6 +144,25 @@ const locale = {
     });
         
 
+    const subscriber3 = Firebase.firestore()
+    .collection("Users")
+    .doc("Hedefler")
+    .collection("Hedefler")
+    .where("complate", "==", false)
+    .onSnapshot((querySnapshot) => {
+      const hedef = [];
+
+      querySnapshot.forEach((documentSnapshot) => {
+        hedef.push({
+          ...documentSnapshot.data(),
+          key: documentSnapshot.id,
+        });
+      });
+
+      setHedef(hedef);
+    });
+        
+
 
           toggleAddFlowersModal = () => {
             setFlowers(true);
@@ -148,7 +173,7 @@ const locale = {
           };
 
 
-          return () => {subscriber(); subscriber2();}
+          return () => {subscriber(); subscriber2(); subscriber3();}
 
     },[modalData])
 
@@ -161,6 +186,23 @@ const locale = {
         return <AliskanliklarList  list={list}  />;
       };
 
+      renderHedefler = (list) => {
+        return <Hedef  list={list}  />;
+      };
+
+      const mood=(item)=>{
+
+        Firebase.firestore().collection("Users").doc(ay).collection(modalData).doc("Mood").set({
+          mood: item,
+      })
+      .then(function() {
+          console.log("Document successfully written!");
+      })
+      .catch(function(error) {
+          console.error("Error writing document: ", error);
+      });
+
+      }
 
 
 
@@ -204,9 +246,10 @@ const locale = {
           iconContainer={{ flex: 0.1 }}
           onDateSelected={(date) => setModalData(date.format("YYYY-MM-DD"))}
           
+          
         //  showDate={false}  ocak,subat 
         /><ScrollView>
-       
+
 
           <View style={{paddingHorizontal:15 ,paddingTop:5}}>
           <Button title="BAS" onPress={()=>toggleAddFlowersModal()}/>
@@ -229,13 +272,40 @@ const locale = {
             />
             </View>
 
-          </View>
-
-          <View style={{paddingHorizontal:15 ,paddingTop:5}}>
-            <View style={styles.listArea2}>
-                <Text>Diğer bileşenler</Text>
+            <Text style={{backgroundColor:"black",color:"white", fontSize:25}}>Hedefler</Text>
+            <View style={styles.listAreaAliskanliklar}>
+              
+                <FlatList
+                data={Hedefler}
+                horizontal={false}
+                showsHorizontalScrollIndicator={false}
+                renderItem={({ item }) => renderHedefler(item)}
+            />
             </View>
+
           </View>
+          <Text style={{backgroundColor:"black",color:"white", fontSize:25}}>Günlük Mood</Text>
+            <View style={[styles.listAreaAliskanliklar,{flexDirection:"row",backgroundColor:"#FCE4EC", justifyContent:"space-around"}]}>
+               <TouchableOpacity onPress={()=>mood(1)}>
+                 <FontAwesome5 name="sad-cry" size={45} color="red"  />
+               </TouchableOpacity>
+
+               <TouchableOpacity  onPress={()=>mood(2)}>
+               <AntDesign name="frowno" size={45} color="#E65100" />
+               </TouchableOpacity>
+
+               <TouchableOpacity  onPress={()=>mood(3)}>
+                 <AntDesign name="meh" size={45} color="#FFB300" />
+               </TouchableOpacity>
+
+               <TouchableOpacity  onPress={()=>mood(4)}>
+                 <AntDesign name="smileo" size={45} color="#66BB6A" />
+               </TouchableOpacity>
+
+               <TouchableOpacity  onPress={()=>mood(5)}>
+                <FontAwesome5 name="laugh-beam" size={45} color="green" /> 
+               </TouchableOpacity>
+            </View>
 
    
          

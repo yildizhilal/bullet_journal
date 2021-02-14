@@ -1,14 +1,39 @@
-import React from 'react';
-import { Text, View } from 'react-native';
+import React, {Component} from 'react'
+import {
+    StyleSheet,
+    View,
+    Text,
+    ScrollView,
+    Image,
+    TouchableHighlight
+} from 'react-native'
+ 
+import {Shadow} from 'react-native-shadow'
 
-const Kitap = () => {
-  return (
-    <View style={{ flex: 1, justifyContent: "center", alignItems: "center" }}>
-      <Text>
-       Giris ekranı
-      </Text>
-    </View>
-  );
+ 
+const Kitap=()=> {
+
+  
+const shadowOpt = {
+  width:100,
+  height:100,
+  color:"#000",
+  border:2,
+  radius:3,
+  opacity:0.2,
+  x:0,
+  y:3,
+  style:{marginVertical:5}
 }
 
-export default Kitap;
+
+
+        return (
+          <Shadow setting={shadowOpt}>
+      
+          <View style={{width:100,height:100}}/>
+      </Shadow>
+        )
+    }
+
+    export default  Kitap;

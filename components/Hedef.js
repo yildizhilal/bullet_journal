@@ -1,90 +1,50 @@
 import React, { useState,useEffect } from "react";
-import { View, Text, TouchableOpacity,StyleSheet,FlatList} from "react-native";
+import { View, Text, TouchableOpacity,StyleSheet} from "react-native";
 import Firebase from "../config/Firebase";
 import { AntDesign } from "../node_modules/@expo/vector-icons";
 import { Feather } from "../node_modules/@expo/vector-icons";
-import Aliskanliklar from "../screens/Aliskanliklar";
-import moment from 'moment';
-import { Shadow } from 'react-native-neomorph-shadows';
-
 
 //disable yellow warnings on EXPO client!
 console.disableYellowBox = true;
 
-const AliskanliklarList = ({ list }) => {
+const Hedef = ({ list }) => {
     const [checkbutton, setCheck] = useState(false);
-    var tarih =moment().format("YYYY-MM-DD"); 
-    const [tt, setTarih] = useState([]);
-
+    
+    const [KalanGun, setKalanGun] = useState(0);
+    const [gun, setGun] = useState(0);
 
     useEffect(()=>{
-    
 
-      var cityRef =Firebase.firestore()
-      .collection("Users")
-      .doc("Aliskanliklar")
-      .collection("Aliskanliklar")
-      .doc(list.name)
-      .collection("Takip")
-      .doc(tarih)
-
-      var setWithMerge = cityRef.set({
-          check: false
-      }, { merge: true });
-
-
-      const subscriber=Firebase.firestore()
-      .collection("Users")
-      .doc("Aliskanliklar")
-      .collection("Aliskanliklar")
-      .doc(list.name)
-      .collection("Takip")
-      .doc(tarih)
-    .onSnapshot(function(doc) {
-        setCheck(doc.data().check)
-    });
-
-
-    const subscriberTarih = Firebase.firestore()
-    .collection("Users")
-    .doc("Aliskanliklar")
-    .collection("Aliskanliklar")
-    .doc(list.name)
-    .collection("Takip")
-  
-    .onSnapshot((querySnapshot) => {
-      const tt = [];
-
-      querySnapshot.forEach((documentSnapshot) => {
-        tt.push({
-          ...documentSnapshot.data(),
-          key: documentSnapshot.id,
-        });
+      Firebase.firestore()
+        .collection("Users")
+        .doc("Hedefler")
+        .collection("Hedefler")
+        .doc(list.name)
+      .onSnapshot(function(doc) {
+        var cities = [];
+        var gun = [];
+          cities.push(doc.data().KalanGun)
+          
+          gun.push(doc.data().gun)
+          
+      setKalanGun(cities)
+      setGun(gun)
       });
-
-
-
-      setTarih(tt);
-    });
-
-
-
-    return () =>{subscriber(); subscriberTarih();} 
-    },[tarih])
+    },[list.name])
 
     check=()=>{
+
         if (checkbutton) {
             setCheck(false);
             var waterRef = Firebase.firestore()
               .collection("Users")
-              .doc("Aliskanliklar")
-              .collection("Aliskanliklar")
+              .doc("Hedefler")
+              .collection("Hedefler")
               .doc(list.name)
-              .collection("Takip")
-              .doc(tarih)
             return waterRef
               .update({
-                check: false,
+                KalanGun: (KalanGun-1),
+                complate:false
               })
               .then(function () {
                 console.log("D!");
@@ -94,37 +54,43 @@ const AliskanliklarList = ({ list }) => {
                 console.error("Error updating document: ", error);
               });
           } else {
+
             setCheck(true);
             var waterRef = Firebase.firestore()
               .collection("Users")
-              .doc("Aliskanliklar")
-              .collection("Aliskanliklar")
+              .doc("Hedefler")
+              .collection("Hedefler")
               .doc(list.name)
-              .collection("Takip")
-              .doc(tarih)
-      
             return waterRef
               .update({
-                check: true,
+                KalanGun: (Number(KalanGun)+1),
               })
               .then(function () {
-                console.log("Doc");
+                if(Number(KalanGun)==(Number(gun)-1))
+                {
+                    console.log(gun)
+                    var cityRef =Firebase.firestore()
+                    .collection("Users")
+                    .doc("Hedefler")
+                    .collection("Hedefler")
+                    .doc(list.name)
+                    return cityRef
+                      .update({
+                        complate:true
+                      })
+                }
               })
               .catch(function (error) {
                 // The document probably doesn't exist.
                 console.error("Error updating document: ", error);
               });
           }
+       
         };
 
   return (
  
-      <View style={{ flex: 1, flexDirection: 'row',  backgroundColor:"pink"}}>  
-
-
-
-
-
+      <View style={{ flex: 1, flexDirection: 'row',  backgroundColor:"pink"}}>   
          <View  style={{ flex: 2, flexDirection: 'row',alignItems:"center" }}>
           <AntDesign name={list.icon} size={35} color={list.color}  />
           </View>
@@ -143,6 +109,7 @@ const AliskanliklarList = ({ list }) => {
               style={{ width: 32, paddingLeft: 10 ,}}
             />
           </TouchableOpacity>
+
       </View>
   );
 
@@ -168,4 +135,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default AliskanliklarList;
+export default Hedef;

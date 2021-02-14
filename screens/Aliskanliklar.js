@@ -1,4 +1,4 @@
-import React, { useState ,useEffect} from "react";
+import React, { useState ,useEffect,useCallback} from "react";
 import {
   View,
   Text,
@@ -7,7 +7,8 @@ import {
   TouchableOpacity,
   TextInput,
   ScrollView,
-  FlatList
+  FlatList,
+  TouchableHighlight
   
 } from "react-native";
 import { Header} from 'react-native-elements';
@@ -17,20 +18,11 @@ import Firebase from '../config/Firebase'
 import { AntDesign } from "../node_modules/@expo/vector-icons";
 import {LocaleConfig} from 'react-native-calendars';
 import Zincir from "../components/Zincir";
-
-
+import SwipebleList from 'rn-swipeable-flatlist';
 
 
 
 const Aliskanliklar = () => {
-
-  LocaleConfig.locales['tr'] = {
-    monthNames: ['Ocak','Şubat','Mart','Nisan','Mayıs','Haziran','Temmuz','Ağustos','Eylül','Ekim','Kasım','Aralık'],
-    monthNamesShort: ['Oca','Şub', 'Mar','Nis','May','Haz','Tem','Ağu','Eyl','Eki','Kas','Ara'],
-    dayNames: ['Pazartesi','Salı','Çarşamba','Perşembe','Cuma','Cumartesi','PAzar'],
-    dayNamesShort: ['Pzt.','Sal.','Çar.','Per.','Cum.','Cmt.','Pzr'],
-  };
-  LocaleConfig.defaultLocale = 'tr';
 
   var tarih =moment().format("YYYY-MM-DD")
     
@@ -155,6 +147,8 @@ renderList = (list) => {
    
   };
 
+
+
   return (
     <View style={{ flex: 1 }}>
       <Header
@@ -174,7 +168,12 @@ renderList = (list) => {
                 showsHorizontalScrollIndicator={false}
                 renderItem={({ item }) => renderList(item)}
                 contentContainerStyle={{ flex: 1 }}
+                ItemSeparatorComponent={()=>{
+                  return   <View style={styles.seperatorLine}></View>
+                }}
+              
             />
+
             </View>
       
               <KeyboardAvoidingView style={styles.container} behavior="padding">
@@ -235,6 +234,7 @@ renderList = (list) => {
                 </TouchableOpacity>
               </View>
               </KeyboardAvoidingView>
+  
             </ScrollView>    
           </View>
     </View>
@@ -290,6 +290,10 @@ const styles = StyleSheet.create({
     width:"100%",
     paddingHorizontal:"5%",
   },
+  seperatorLine:{
+    height:1,
+    backgroundColor:"black"
+  }
 });
 
 export default Aliskanliklar;
